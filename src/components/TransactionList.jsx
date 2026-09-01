@@ -1,10 +1,10 @@
 import { formatRupiah, formatTanggal } from '../utils/format'
 
-function LabelTransaksi({ trx }) {
-  if (trx.type === 'topup') return 'Top-up saldo'
+function LabelTransaction({ trx }) {
+  if (trx.type === 'topup') return 'Top-up balance'
 
-  const nama = trx.counterparty?.name ?? trx.counterparty?.username ?? 'pengguna lain'
-  return trx.direction === 'out' ? `Kirim ke ${nama}` : `Terima dari ${nama}`
+  const name = trx.counterparty?.name ?? trx.counterparty?.username ?? 'Other user'
+  return trx.direction === 'out' ? `Send to ${name}` : `Accept from ${name}`
 }
 
 export default function TransactionList({ transactions, loading, error, onRetry }) {
@@ -12,7 +12,7 @@ export default function TransactionList({ transactions, loading, error, onRetry 
     return (
       <div className="rounded-xl border border-[#e3e7eb] bg-white p-5">
         <h2 className="mb-4 text-base font-medium text-[#2c2e2f]">
-          Riwayat transaksi
+          Transaction history
         </h2>
         <div className="space-y-3">
           {[0, 1, 2].map((i) => (
@@ -33,7 +33,7 @@ export default function TransactionList({ transactions, loading, error, onRetry 
     return (
       <div className="rounded-xl border border-[#e3e7eb] bg-white p-5">
         <h2 className="mb-3 text-base font-medium text-[#2c2e2f]">
-          Riwayat transaksi
+          Transaction history
         </h2>
         <p className="text-sm text-[#d20000]">{error}</p>
         <button
@@ -41,7 +41,7 @@ export default function TransactionList({ transactions, loading, error, onRetry 
           onClick={onRetry}
           className="mt-3 rounded-full border border-[#e3e7eb] px-4 py-1.5 text-sm text-[#0070ba] transition hover:border-[#0070ba]"
         >
-          Coba lagi
+          Try again
         </button>
       </div>
     )
@@ -51,7 +51,7 @@ export default function TransactionList({ transactions, loading, error, onRetry 
     <div className="rounded-xl border border-[#e3e7eb] bg-white p-5">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-base font-medium text-[#2c2e2f]">
-          Riwayat transaksi
+          Transaction history
         </h2>
         {loading && (
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-[#0070ba]" />
@@ -60,7 +60,7 @@ export default function TransactionList({ transactions, loading, error, onRetry 
 
       {transactions.length === 0 ? (
         <p className="py-8 text-center text-sm text-[#687173]">
-          Belum ada transaksi. Mulai dengan top-up saldo.
+          No transactions. Top up your balance to start.
         </p>
       ) : (
         <ul className="divide-y divide-[#e3e7eb]">
@@ -68,7 +68,7 @@ export default function TransactionList({ transactions, loading, error, onRetry 
             <li key={trx.id} className="flex items-start justify-between gap-3 py-3">
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium text-[#2c2e2f]">
-                  <LabelTransaksi trx={trx} />
+                  <LabelTransaction trx={trx} />
                 </p>
                 <p className="mt-0.5 text-xs text-[#687173]">
                   {formatTanggal(trx.created_at)}
@@ -90,7 +90,7 @@ export default function TransactionList({ transactions, loading, error, onRetry 
                     (trx.direction === 'out' ? '-' : '+') + formatRupiah(trx.amount)}
                 </p>
                 <p className="mt-0.5 text-xs text-[#687173]">
-                  Saldo {formatRupiah(trx.balance_after)}
+                  Balance {formatRupiah(trx.balance_after)}
                 </p>
               </div>
             </li>

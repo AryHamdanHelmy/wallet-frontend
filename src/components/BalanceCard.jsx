@@ -4,14 +4,14 @@ export default function BalanceCard({ balance, loading, onRefresh }) {
   return (
     <div className="rounded-2xl bg-linear-to-br from-[#003087] to-[#0070ba] p-6 text-white shadow-sm">
       <div className="flex items-start justify-between">
-        <p className="text-sm text-white/70">Saldo Anda</p>
+        <p className="text-sm text-white/70">Your balance</p>
         <button
           type="button"
           onClick={onRefresh}
           disabled={loading}
           className="rounded-full px-2.5 py-1 text-xs text-white/70 transition hover:bg-white/10 hover:text-white disabled:opacity-40"
         >
-          {loading ? 'Memuat...' : 'Perbarui'}
+          {loading ? 'Processing...' : 'Refresh'}
         </button>
       </div>
 
@@ -24,7 +24,7 @@ export default function BalanceCard({ balance, loading, onRefresh }) {
       </p>
 
       <p className="mt-4 text-xs text-white/60">
-        Saldo diperbarui otomatis setiap transaksi berhasil
+        Balance updates automatically upon successful transaction.
       </p>
     </div>
   )

@@ -78,7 +78,7 @@ export default function DashboardPage() {
               disabled={loggingOut}
               className="rounded-full border border-[#e3e7eb] px-3.5 py-1.5 text-sm text-[#2c2e2f] transition hover:border-[#0070ba] hover:text-[#0070ba] disabled:opacity-50"
             >
-              {loggingOut ? 'Keluar...' : 'Keluar'}
+              {loggingOut ? 'Logging out...' : 'Logout'}
             </button>
           </div>
         </div>

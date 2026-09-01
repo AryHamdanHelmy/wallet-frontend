@@ -35,9 +35,11 @@ export default function TransferForm({ onSuccess }) {
         form.description || undefined,
       )
 
-      setSuccess(`Transfer ${formatRupiah(Number(form.amount))} berhasil.`)
+      setSuccess(`Transfer of ${formatRupiah(Number(form.amount))} was successful.`)
       setForm({ recipient: '', amount: '', description: '' })
       onSuccess?.(res.data.data)
+
+      setTimeout(() => setSuccess(''), 4000)
     } catch (error) {
       const errors = getFieldErrors(error)
       setFieldErrors(errors)
@@ -45,7 +47,7 @@ export default function TransferForm({ onSuccess }) {
       if (Object.keys(errors).length === 0) {
         setGeneralError(
           isRateLimited(error)
-            ? 'Terlalu banyak permintaan. Tunggu sebentar.'
+            ? 'Too many request, please wait.'
             : getErrorMessage(error),
         )
       }
@@ -63,7 +65,7 @@ export default function TransferForm({ onSuccess }) {
 
   return (
     <div className="rounded-xl border border-[#e3e7eb] bg-white p-5">
-      <h2 className="text-base font-medium text-[#2c2e2f]">Kirim saldo</h2>
+      <h2 className="text-base font-medium text-[#2c2e2f]">Transfer</h2>
 
       <form onSubmit={handleSubmit} className="mt-4" noValidate>
         <div className="mb-3">
@@ -71,7 +73,7 @@ export default function TransferForm({ onSuccess }) {
             htmlFor="recipient"
             className="mb-1.5 block text-sm font-medium text-[#2c2e2f]"
           >
-            Penerima
+            Recipient
           </label>
           <input
             id="recipient"
@@ -95,7 +97,7 @@ export default function TransferForm({ onSuccess }) {
             htmlFor="transfer-amount"
             className="mb-1.5 block text-sm font-medium text-[#2c2e2f]"
           >
-            Nominal
+            Amount
           </label>
           <input
             id="transfer-amount"
@@ -118,7 +120,7 @@ export default function TransferForm({ onSuccess }) {
             htmlFor="description"
             className="mb-1.5 block text-sm font-medium text-[#2c2e2f]"
           >
-            Catatan <span className="font-normal text-[#687173]">(opsional)</span>
+            Description <span className="font-normal text-[#687173]">(opsional)</span>
           </label>
           <input
             id="description"
@@ -127,7 +129,7 @@ export default function TransferForm({ onSuccess }) {
             value={form.description}
             onChange={handleChange}
             disabled={submitting}
-            placeholder="Misal: bayar makan siang"
+            placeholder="Add a note"
             className={inputClass(fieldErrors.description)}
           />
         </div>
@@ -157,7 +159,7 @@ export default function TransferForm({ onSuccess }) {
           {submitting && (
             <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
           )}
-          {submitting ? 'Mengirim...' : 'Kirim'}
+          {submitting ? 'Sending...' : 'Send Money'}
         </button>
       </form>
     </div>
