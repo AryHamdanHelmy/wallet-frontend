@@ -18,9 +18,14 @@ export function AuthProvider({ children }) {
     authApi
       .me()
       .then((res) => setUser(res.data.data))
-      .catch(() => {
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
+      .catch((error) => {
+        if (error.response?.status === 401) {
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
+            return
+        }
+        const cached = localStorage.getItem('user')
+        if (cached) setUser(JSON.parse(cached))
       })
       .finally(() => setLoading(false))
   }, [])
