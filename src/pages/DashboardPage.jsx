@@ -21,7 +21,7 @@ export default function DashboardPage() {
 
   const [loggingOut, setLoggingOut] = useState(false)
 
-  const muatSaldo = useCallback(async () => {
+  const loadBalance = useCallback(async () => {
     setBalanceLoading(true)
     try {
       const res = await walletApi.getBalance()
@@ -33,7 +33,7 @@ export default function DashboardPage() {
     }
   }, [])
 
-  const muatTransaksi = useCallback(async () => {
+  const loadTransaction = useCallback(async () => {
     setTrxLoading(true)
     setTrxError('')
     try {
@@ -47,13 +47,13 @@ export default function DashboardPage() {
   }, [])
 
   useEffect(() => {
-    muatSaldo()
-    muatTransaksi()
-  }, [muatSaldo, muatTransaksi])
+    loadBalance()
+    loadTransaction()
+  }, [loadBalance, loadTransaction])
 
-  const setelahTransaksi = () => {
-    muatSaldo()
-    muatTransaksi()
+  const afterTransaction = () => {
+    loadBalance()
+    loadTransaction()
   }
 
   const handleLogout = async () => {
@@ -63,20 +63,20 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f9fa]">
-      <header className="border-b border-[#e3e7eb] bg-white">
+    <div className="min-h-screen bg-background">
+      <header className="border-b border-line bg-white">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3.5">
-          <span className="text-lg font-semibold text-[#003087]">MiniWallet</span>
+          <span className="text-heading text-primaryDark">MiniWallet</span>
 
           <div className="flex items-center gap-3">
-            <span className="hidden text-sm text-[#687173] sm:inline">
-              {user?.name}
+            <span className="hidden text-sm text-textSecondary sm:inline">
+              {user?.username}
             </span>
             <button
               type="button"
               onClick={handleLogout}
               disabled={loggingOut}
-              className="rounded-full border border-[#e3e7eb] px-3.5 py-1.5 text-sm text-[#2c2e2f] transition hover:border-[#0070ba] hover:text-[#0070ba] disabled:opacity-50"
+              className="rounded-full border border-line px-3.5 py-1.5 text-sm text-textPrimary transition hover:border-primary hover:text-priborder-primary disabled:opacity-50"
             >
               {loggingOut ? 'Logging out...' : 'Logout'}
             </button>
@@ -88,19 +88,19 @@ export default function DashboardPage() {
         <BalanceCard
           balance={balance}
           loading={balanceLoading}
-          onRefresh={muatSaldo}
+          onRefresh={loadBalance}
         />
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <TopupForm onSuccess={setelahTransaksi} />
-          <TransferForm onSuccess={setelahTransaksi} />
+          <TopupForm onSuccess={afterTransaction} />
+          <TransferForm onSuccess={afterTransaction} />
         </div>
 
         <TransactionList
           transactions={transactions}
           loading={trxLoading}
           error={trxError}
-          onRetry={muatTransaksi}
+          onRetry={loadTransaction}
         />
       </main>
     </div>

@@ -57,21 +57,21 @@ export default function TransferForm({ onSuccess }) {
   }
 
   const inputClass = (error) =>
-    `w-full rounded-lg border px-3 py-2.5 text-[15px] outline-none transition focus:ring-2 focus:ring-[#0070ba]/20 disabled:bg-slate-50 ${
+    `w-full rounded-lg border px-3 py-2.5 text-[15px] outline-none transition focus:ring-2 focus:ring-primary/20 disabled:bg-slate-50 ${
       error
-        ? 'border-[#d20000] focus:border-[#d20000]'
-        : 'border-[#e3e7eb] focus:border-[#0070ba]'
+        ? 'border-danger focus:border-danger'
+        : 'border-line focus:border-primary'
     }`
 
   return (
-    <div className="rounded-xl border border-[#e3e7eb] bg-white p-5">
-      <h2 className="text-base font-medium text-[#2c2e2f]">Transfer</h2>
+    <div className="rounded-xl border border-line bg-white p-5">
+      <h2 className="text-title text-textPrimary">Transfer</h2>
 
       <form onSubmit={handleSubmit} className="mt-4" noValidate>
         <div className="mb-3">
           <label
             htmlFor="recipient"
-            className="mb-1.5 block text-sm font-medium text-[#2c2e2f]"
+            className="mb-1.5 block text-sm font-medium text-textPrimary"
           >
             Recipient
           </label>
@@ -82,11 +82,11 @@ export default function TransferForm({ onSuccess }) {
             value={form.recipient}
             onChange={handleChange}
             disabled={submitting}
-            placeholder="Email atau nomor HP"
+            placeholder="Email or phone number"
             className={inputClass(fieldErrors.recipient)}
           />
           {fieldErrors.recipient && (
-            <p className="mt-1.5 text-sm text-[#d20000]">
+            <p className="mt-1.5 text-sm text-danger">
               {fieldErrors.recipient}
             </p>
           )}
@@ -95,7 +95,7 @@ export default function TransferForm({ onSuccess }) {
         <div className="mb-3">
           <label
             htmlFor="transfer-amount"
-            className="mb-1.5 block text-sm font-medium text-[#2c2e2f]"
+            className="mb-1.5 block text-sm font-medium text-textPrimary"
           >
             Amount
           </label>
@@ -111,16 +111,16 @@ export default function TransferForm({ onSuccess }) {
             className={inputClass(fieldErrors.amount)}
           />
           {fieldErrors.amount && (
-            <p className="mt-1.5 text-sm text-[#d20000]">{fieldErrors.amount}</p>
+            <p className="mt-1.5 text-sm text-danger">{fieldErrors.amount}</p>
           )}
         </div>
 
         <div className="mb-3">
           <label
             htmlFor="description"
-            className="mb-1.5 block text-sm font-medium text-[#2c2e2f]"
+            className="mb-1.5 block text-sm font-medium text-textPrimary"
           >
-            Description <span className="font-normal text-[#687173]">(opsional)</span>
+            Description <span className="font-normal text-textSecondary">(opsional)</span>
           </label>
           <input
             id="description"
@@ -137,7 +137,7 @@ export default function TransferForm({ onSuccess }) {
         {generalError && (
           <div
             role="alert"
-            className="mb-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-[#d20000]"
+            className="mb-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-danger"
           >
             {generalError}
           </div>
@@ -145,7 +145,7 @@ export default function TransferForm({ onSuccess }) {
         {success && (
           <div
             role="status"
-            className="mb-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-[#00a67e]"
+            className="mb-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-success"
           >
             {success}
           </div>
@@ -154,7 +154,7 @@ export default function TransferForm({ onSuccess }) {
         <button
           type="submit"
           disabled={submitting || !form.recipient || !form.amount}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-[#0070ba] px-4 py-2.5 text-[15px] font-medium text-white transition hover:bg-[#005ea6] disabled:cursor-not-allowed disabled:bg-[#9ec3dd]"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-[15px] font-medium text-white transition hover:bg-primaryHover disabled:cursor-not-allowed disabled:bg-[#9ec3dd]"
         >
           {submitting && (
             <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />

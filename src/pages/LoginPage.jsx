@@ -51,24 +51,24 @@ export default function LoginPage() {
   const isDisabled = submitting || !form.email || !form.password
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#f7f9fa] px-4 py-8 sm:items-center sm:justify-center">
+    <div className="flex min-h-screen flex-col bg-line px-4 py-8 sm:items-center sm:justify-center">
       <div className="mx-auto w-full max-w-sm">
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-semibold text-[#003087]">MiniWallet</h1>
-          <p className="mt-1 text-sm text-[#687173]">
-            Masuk untuk mengelola saldo Anda
+          <h1 className="text-heading text-primaryDark">MiniWallet</h1>
+          <p className="mt-1 text-sm text-textSecondary">
+            Sign in to manage your balance.
           </p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="rounded-xl border border-[#e3e7eb] bg-white p-6 shadow-sm"
+          className="rounded-xl border border-line bg-white p-6 shadow-sm"
           noValidate
         >
           {generalError && (
             <div
               role="alert"
-              className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-[#d20000]"
+              className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-danger"
             >
               {generalError}
             </div>
@@ -77,7 +77,7 @@ export default function LoginPage() {
           <div className="mb-4">
             <label
               htmlFor="email"
-              className="mb-1.5 block text-sm font-medium text-[#2c2e2f]"
+              className="mb-1.5 block text-sm font-medium text-textPrimary"
             >
               Email
             </label>
@@ -89,22 +89,22 @@ export default function LoginPage() {
               value={form.email}
               onChange={handleChange}
               disabled={submitting}
-              className={`w-full rounded-lg border px-3 py-2.5 text-[15px] outline-none transition focus:ring-2 focus:ring-[#0070ba]/20 disabled:bg-slate-50 ${
+              className={`w-full rounded-lg border px-3 py-2.5 text-[15px] outline-none transition focus:ring-2 focus:ring-primary/20 disabled:bg-slate-50 ${
                 fieldErrors.email
-                  ? 'border-[#d20000] focus:border-[#d20000]'
-                  : 'border-[#e3e7eb] focus:border-[#0070ba]'
+                  ? 'border-danger focus:border-danger'
+                  : 'border-line focus:border-primary'
               }`}
-              placeholder="nama@email.com"
+              placeholder="Email or phone number"
             />
             {fieldErrors.email && (
-              <p className="mt-1.5 text-sm text-[#d20000]">{fieldErrors.email}</p>
+              <p className="mt-1.5 text-sm text-danger">{fieldErrors.email}</p>
             )}
           </div>
 
           <div className="mb-5">
             <label
               htmlFor="password"
-              className="mb-1.5 block text-sm font-medium text-[#2c2e2f]"
+              className="mb-1.5 block text-sm font-medium text-textPrimary"
             >
               Password
             </label>
@@ -116,15 +116,15 @@ export default function LoginPage() {
               value={form.password}
               onChange={handleChange}
               disabled={submitting}
-              className={`w-full rounded-lg border px-3 py-2.5 text-[15px] outline-none transition focus:ring-2 focus:ring-[#0070ba]/20 disabled:bg-slate-50 ${
+              className={`w-full rounded-lg border px-3 py-2.5 text-[15px] outline-none transition focus:ring-2 focus:ring-primary/20 disabled:bg-slate-50 ${
                 fieldErrors.password
-                  ? 'border-[#d20000] focus:border-[#d20000]'
-                  : 'border-[#e3e7eb] focus:border-[#0070ba]'
+                  ? 'border-danger focus:border-danger'
+                  : 'border-line focus:border-primary'
               }`}
-              placeholder="Masukkan password"
+              placeholder="Enter your password"
             />
             {fieldErrors.password && (
-              <p className="mt-1.5 text-sm text-[#d20000]">
+              <p className="mt-1.5 text-sm text-danger">
                 {fieldErrors.password}
               </p>
             )}
@@ -133,22 +133,22 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isDisabled}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-[#0070ba] px-4 py-3 text-[15px] font-medium text-white transition hover:bg-[#005ea6] disabled:cursor-not-allowed disabled:bg-[#9ec3dd]"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-3 text-[15px] font-medium text-white transition hover:bg-primaryHover disabled:cursor-not-allowed disabled:bg-[#9ec3dd]"
           >
             {submitting && (
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
             )}
-            {submitting ? 'Memproses...' : 'Masuk'}
+            {submitting ? 'Processing...' : 'Log In'}
           </button>
         </form>
 
-        <p className="mt-5 text-center text-sm text-[#687173]">
-          Belum punya akun?{' '}
+        <p className="mt-5 text-center text-sm text-textSecondary">
+          Don't have account?{' '}
           <Link
             to="/register"
-            className="font-medium text-[#0070ba] hover:underline"
+            className="font-medium text-primary hover:underline"
           >
-            Daftar sekarang
+            Sign Up
           </Link>
         </p>
       </div>

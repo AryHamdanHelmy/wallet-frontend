@@ -2,7 +2,7 @@ import { formatRupiah } from '../utils/format'
 
 export default function BalanceCard({ balance, loading, onRefresh }) {
   return (
-    <div className="rounded-2xl bg-linear-to-br from-[#003087] to-[#0070ba] p-6 text-white shadow-sm">
+    <div className="rounded-2xl bg-linear-to-br from-primaryDark to-primary p-6 text-white shadow-sm">
       <div className="flex items-start justify-between">
         <p className="text-sm text-white/70">Your balance</p>
         <button
