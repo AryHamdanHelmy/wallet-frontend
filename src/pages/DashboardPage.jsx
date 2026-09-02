@@ -66,19 +66,19 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-background">
       <header className="border-b border-line bg-white">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3.5">
-          <span className="text-heading text-primaryDark">MiniWallet</span>
+          <span className="text-display tracking-tighter text-primaryDark">Mini<span className='text-textPrimary'>Wallet</span></span>
 
           <div className="flex items-center gap-3">
-            <span className="hidden text-sm text-textSecondary sm:inline">
+            <span className="hidden text-title text-textSecondary sm:inline">
               {user?.username}
             </span>
             <button
               type="button"
               onClick={handleLogout}
               disabled={loggingOut}
-              className="rounded-full border border-line px-3.5 py-1.5 text-sm text-textPrimary transition hover:border-primary hover:text-priborder-primary disabled:opacity-50"
+              className="rounded-full border border-line px-3.5 py-1.5 text-title text-textPrimary transition hover:border-primary hover:text-priborder-primary disabled:opacity-50"
             >
-              {loggingOut ? 'Logging out...' : 'Logout'}
+              {loggingOut ? 'Logging out...' : 'LOG OUT'}
             </button>
           </div>
         </div>

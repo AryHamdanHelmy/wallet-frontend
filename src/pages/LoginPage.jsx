@@ -49,38 +49,32 @@ export default function LoginPage() {
   }
 
   const isDisabled = submitting || !form.email || !form.password
+  const inputClass = (error) =>
+    `w-full rounded-md border bg-background px-4 py-4 text-[15px] text-textPrimary outline-none transition placeholder:text-textSecondary focus:bg-surface focus:ring-2 focus:ring-primary/15 disabled:opacity-60 ${
+        error ? 'border-danger' : 'border-line focus:border-primary'
+    }`
 
-  return (
-    <div className="flex min-h-screen flex-col bg-line px-4 py-8 sm:items-center sm:justify-center">
-      <div className="mx-auto w-full max-w-sm">
-        <div className="mb-6 text-center">
-          <h1 className="text-heading text-primaryDark">MiniWallet</h1>
-          <p className="mt-1 text-sm text-textSecondary">
-            Sign in to manage your balance.
-          </p>
+    return (
+    <div className="flex min-h-screen items-center justify-center bg-surface px-4 py-10">
+      <div className="w-full max-w-md rounded-lg border border-line px-8 py-12 sm:px-14">
+        <div className="mb-10 text-center">
+          <span className="text-display tracking-tight text-textPrimary">
+            Mini<span className="text-primary">Wallet</span>
+          </span>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="rounded-xl border border-line bg-white p-6 shadow-sm"
-          noValidate
-        >
+        <form onSubmit={handleSubmit} noValidate>
           {generalError && (
             <div
               role="alert"
-              className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-danger"
+              className="mb-5 rounded-lg bg-danger/10 px-4 py-3 text-sm font-medium text-danger"
             >
               {generalError}
             </div>
           )}
 
           <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="mb-1.5 block text-sm font-medium text-textPrimary"
-            >
-              Email
-            </label>
+            <label htmlFor="email" className="sr-only">Email</label>
             <input
               id="email"
               name="email"
@@ -89,12 +83,8 @@ export default function LoginPage() {
               value={form.email}
               onChange={handleChange}
               disabled={submitting}
-              className={`w-full rounded-lg border px-3 py-2.5 text-[15px] outline-none transition focus:ring-2 focus:ring-primary/20 disabled:bg-slate-50 ${
-                fieldErrors.email
-                  ? 'border-danger focus:border-danger'
-                  : 'border-line focus:border-primary'
-              }`}
-              placeholder="Email or phone number"
+              className={inputClass(fieldErrors.email)}
+              placeholder="Email address"
             />
             {fieldErrors.email && (
               <p className="mt-1.5 text-sm text-danger">{fieldErrors.email}</p>
@@ -102,12 +92,7 @@ export default function LoginPage() {
           </div>
 
           <div className="mb-5">
-            <label
-              htmlFor="password"
-              className="mb-1.5 block text-sm font-medium text-textPrimary"
-            >
-              Password
-            </label>
+            <label htmlFor="password" className="sr-only">Password</label>
             <input
               id="password"
               name="password"
@@ -116,24 +101,18 @@ export default function LoginPage() {
               value={form.password}
               onChange={handleChange}
               disabled={submitting}
-              className={`w-full rounded-lg border px-3 py-2.5 text-[15px] outline-none transition focus:ring-2 focus:ring-primary/20 disabled:bg-slate-50 ${
-                fieldErrors.password
-                  ? 'border-danger focus:border-danger'
-                  : 'border-line focus:border-primary'
-              }`}
-              placeholder="Enter your password"
+              className={inputClass(fieldErrors.password)}
+              placeholder="Password"
             />
             {fieldErrors.password && (
-              <p className="mt-1.5 text-sm text-danger">
-                {fieldErrors.password}
-              </p>
+              <p className="mt-1.5 text-sm text-danger">{fieldErrors.password}</p>
             )}
           </div>
 
           <button
             type="submit"
             disabled={isDisabled}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-3 text-[15px] font-medium text-white transition hover:bg-primaryHover disabled:cursor-not-allowed disabled:bg-[#9ec3dd]"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-[15px] font-bold text-white transition hover:bg-primaryHover disabled:cursor-not-allowed disabled:bg-primary/35"
           >
             {submitting && (
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
@@ -142,15 +121,18 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="mt-5 text-center text-sm text-textSecondary">
-          Don't have account?{' '}
-          <Link
-            to="/register"
-            className="font-medium text-primary hover:underline"
-          >
-            Sign Up
-          </Link>
-        </p>
+        <div className="my-6 flex items-center gap-4">
+          <span className="h-px flex-1 bg-line" />
+          <span className="text-sm text-textSecondary">or</span>
+          <span className="h-px flex-1 bg-line" />
+        </div>
+
+        <Link
+          to="/register"
+          className="block rounded-full border-2 border-textPrimary py-3 text-center text-[15px] font-bold text-textPrimary transition hover:bg-background"
+        >
+          Sign Up
+        </Link>
       </div>
     </div>
   )
