@@ -1,53 +1,96 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { walletApi } from '../api/wallet'
 import { getErrorMessage, getFieldErrors, isRateLimited } from '../api/errors'
 import { formatRupiah } from '../utils/format'
+import TransferConfirmDialog from './TransferConfirmDialog'
 
-export default function TransferForm({ onSuccess }) {
-  const [form, setForm] = useState({ recipient: '', amount: '', description: '' })
+const EMPTY = { recipient: '', amount: '', description: '' }
+
+export default function TransferForm({ balance, onSuccess }) {
+  const [form, setForm] = useState(EMPTY)
   const [fieldErrors, setFieldErrors] = useState({})
   const [generalError, setGeneralError] = useState('')
   const [success, setSuccess] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [confirming, setConfirming] = useState(false)
+
+  const successTimer = useRef(null)
+  useEffect(() => () => clearTimeout(successTimer.current), [])
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === 'amount' ? value.replace(/\D/g, '') : value,
+    }))
     setFieldErrors((prev) => ({ ...prev, [name]: undefined }))
     setGeneralError('')
     setSuccess('')
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const validate = () => {
+    const errors = {}
+    if (!form.recipient.trim()) {
+      errors.recipient = 'Enter an email or phone number.'
+    }
+    const parsed = Number(form.amount)
+    if (!form.amount) {
+      errors.amount = 'Enter an amount first.'
+    } else if (!Number.isFinite(parsed) || parsed <= 0) {
+      errors.amount = 'Enter an amount greater than zero.'
+    }
+    return errors
+  }
 
+  // Submitting the form only opens the confirmation. Nothing leaves the
+  // account until the user confirms in the dialog.
+  const handleSubmit = (e) => {
+    e.preventDefault()
     if (submitting) return
 
-    setSubmitting(true)
     setFieldErrors({})
     setGeneralError('')
     setSuccess('')
 
+    const invalid = validate()
+    if (Object.keys(invalid).length > 0) {
+      setFieldErrors(invalid)
+      return
+    }
+
+    setConfirming(true)
+  }
+
+  const handleConfirm = async () => {
+    const parsed = Number(form.amount)
+    setSubmitting(true)
+
     try {
       const res = await walletApi.transfer(
-        form.recipient,
-        Number(form.amount),
+        form.recipient.trim(),
+        parsed,
         form.description || undefined,
       )
 
-      setSuccess(`Transfer of ${formatRupiah(Number(form.amount))} was successful.`)
-      setForm({ recipient: '', amount: '', description: '' })
+      setConfirming(false)
+      setSuccess(`Transfer of ${formatRupiah(parsed)} was successful.`)
+      setForm(EMPTY)
       onSuccess?.(res.data.data)
 
-      setTimeout(() => setSuccess(''), 4000)
+      clearTimeout(successTimer.current)
+      successTimer.current = setTimeout(() => setSuccess(''), 4000)
     } catch (error) {
+      // Close the dialog so the error is visible against the form fields it
+      // refers to, rather than stranded behind an overlay.
+      setConfirming(false)
+
       const errors = getFieldErrors(error)
       setFieldErrors(errors)
 
       if (Object.keys(errors).length === 0) {
         setGeneralError(
           isRateLimited(error)
-            ? 'Too many request, please wait.'
+            ? 'Too many requests. Please wait a moment.'
             : getErrorMessage(error),
         )
       }
@@ -56,12 +99,14 @@ export default function TransferForm({ onSuccess }) {
     }
   }
 
-  const inputClass = (error) =>
-    `w-full rounded-lg border px-3 py-2.5 text-[15px] outline-none transition focus:ring-2 focus:ring-primary/20 disabled:bg-slate-50 ${
+  const inputClass = (error, extra = '') =>
+    `w-full rounded-lg border px-3 py-2.5 text-[15px] outline-none transition focus:ring-2 focus:ring-primary/20 disabled:bg-slate-50 ${extra} ${
       error
         ? 'border-danger focus:border-danger'
         : 'border-line focus:border-primary'
     }`
+
+  const labelClass = 'mb-1.5 block text-sm font-medium text-textPrimary'
 
   return (
     <div className="rounded-xl border border-line bg-white p-5">
@@ -69,10 +114,7 @@ export default function TransferForm({ onSuccess }) {
 
       <form onSubmit={handleSubmit} className="mt-4" noValidate>
         <div className="mb-3">
-          <label
-            htmlFor="recipient"
-            className="mb-1.5 block text-sm font-medium text-textPrimary"
-          >
+          <label htmlFor="recipient" className={labelClass}>
             Recipient
           </label>
           <input
@@ -82,21 +124,20 @@ export default function TransferForm({ onSuccess }) {
             value={form.recipient}
             onChange={handleChange}
             disabled={submitting}
+            aria-invalid={Boolean(fieldErrors.recipient)}
+            aria-describedby={fieldErrors.recipient ? 'recipient-error' : undefined}
             placeholder="Email or phone number"
             className={inputClass(fieldErrors.recipient)}
           />
           {fieldErrors.recipient && (
-            <p className="mt-1.5 text-sm text-danger">
+            <p id="recipient-error" className="mt-1.5 text-sm text-danger">
               {fieldErrors.recipient}
             </p>
           )}
         </div>
 
         <div className="mb-3">
-          <label
-            htmlFor="transfer-amount"
-            className="mb-1.5 block text-sm font-medium text-textPrimary"
-          >
+          <label htmlFor="transfer-amount" className={labelClass}>
             Amount
           </label>
           <input
@@ -107,20 +148,22 @@ export default function TransferForm({ onSuccess }) {
             value={form.amount}
             onChange={handleChange}
             disabled={submitting}
+            aria-invalid={Boolean(fieldErrors.amount)}
+            aria-describedby={fieldErrors.amount ? 'transfer-amount-error' : undefined}
             placeholder="0"
-            className={inputClass(fieldErrors.amount)}
+            className={inputClass(fieldErrors.amount, 'tabular-nums')}
           />
           {fieldErrors.amount && (
-            <p className="mt-1.5 text-sm text-danger">{fieldErrors.amount}</p>
+            <p id="transfer-amount-error" className="mt-1.5 text-sm text-danger">
+              {fieldErrors.amount}
+            </p>
           )}
         </div>
 
         <div className="mb-3">
-          <label
-            htmlFor="description"
-            className="mb-1.5 block text-sm font-medium text-textPrimary"
-          >
-            Description <span className="font-normal text-textSecondary">(opsional)</span>
+          <label htmlFor="description" className={labelClass}>
+            Description{' '}
+            <span className="font-normal text-textSecondary">(optional)</span>
           </label>
           <input
             id="description"
@@ -129,9 +172,16 @@ export default function TransferForm({ onSuccess }) {
             value={form.description}
             onChange={handleChange}
             disabled={submitting}
+            aria-invalid={Boolean(fieldErrors.description)}
+            aria-describedby={fieldErrors.description ? 'description-error' : undefined}
             placeholder="Add a note"
             className={inputClass(fieldErrors.description)}
           />
+          {fieldErrors.description && (
+            <p id="description-error" className="mt-1.5 text-sm text-danger">
+              {fieldErrors.description}
+            </p>
+          )}
         </div>
 
         {generalError && (
@@ -153,15 +203,23 @@ export default function TransferForm({ onSuccess }) {
 
         <button
           type="submit"
-          disabled={submitting || !form.recipient || !form.amount}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-[15px] font-medium text-white transition hover:bg-primaryHover disabled:cursor-not-allowed disabled:bg-[#9ec3dd]"
+          disabled={submitting}
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-[15px] font-medium text-white transition hover:bg-primaryHover disabled:opacity-60"
         >
-          {submitting && (
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-          )}
-          {submitting ? 'Sending...' : 'Send Money'}
+          Review transfer
         </button>
       </form>
+
+      <TransferConfirmDialog
+        open={confirming}
+        recipient={form.recipient.trim()}
+        amount={Number(form.amount)}
+        description={form.description}
+        balance={balance}
+        submitting={submitting}
+        onConfirm={handleConfirm}
+        onCancel={() => setConfirming(false)}
+      />
     </div>
   )
 }

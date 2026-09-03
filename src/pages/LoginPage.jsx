@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { getErrorMessage, getFieldErrors, isRateLimited } from '../api/errors'
+import wordMark from '../assets/wordmark-coin.svg'
 
 export default function LoginPage() {
   const { login, isAuthenticated, loading: authLoading } = useAuth()
@@ -57,10 +58,8 @@ export default function LoginPage() {
     return (
     <div className="flex min-h-screen items-center justify-center bg-surface px-4 py-10">
       <div className="w-full max-w-md rounded-lg border border-line px-8 py-12 sm:px-14">
-        <div className="mb-10 text-center">
-          <span className="text-display tracking-tight text-textPrimary">
-            Mini<span className="text-primary">Wallet</span>
-          </span>
+        <div className="flex items-center justify-center mb-4">
+          <img src={wordMark} alt="Koku" className="h-7 w-auto" />
         </div>
 
         <form onSubmit={handleSubmit} noValidate>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { getErrorMessage, getFieldErrors, isRateLimited } from '../api/errors'
+import wordMark from '../assets/wordmark-coin.svg'
 
 const FIELDS = [
   {
@@ -120,10 +121,8 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-surface px-4 py-10">
       <div className="w-full max-w-md rounded-lg border border-line px-8 py-12 sm:px-14">
-        <div className="mb-9 text-center">
-          <span className="text-3xl font-extrabold tracking-tight text-textPrimary">
-            Mini<span className="text-primary">Wallet</span>
-          </span>
+        <div className="mb-4 text-center grid justify-items-center">
+          <img src={wordMark} alt="Koku" className="h-7 w-auto" />
           <p className="mt-2 text-sm text-textSecondary">
             Join now to start transacting.
           </p>

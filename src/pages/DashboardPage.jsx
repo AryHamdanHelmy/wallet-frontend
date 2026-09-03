@@ -7,6 +7,7 @@ import BalanceCard from '../components/BalanceCard'
 import TopupForm from '../components/TopupForm'
 import TransferForm from '../components/TransferForm'
 import TransactionList from '../components/TransactionList'
+import logoFull from '../assets/logo-full.svg'
 
 export default function DashboardPage() {
   const { user, logout } = useAuth()
@@ -14,6 +15,7 @@ export default function DashboardPage() {
 
   const [balance, setBalance] = useState(null)
   const [balanceLoading, setBalanceLoading] = useState(true)
+  const [balanceError, setBalanceError] = useState('')
 
   const [transactions, setTransactions] = useState([])
   const [trxLoading, setTrxLoading] = useState(true)
@@ -23,11 +25,14 @@ export default function DashboardPage() {
 
   const loadBalance = useCallback(async () => {
     setBalanceLoading(true)
+    setBalanceError('')
     try {
       const res = await walletApi.getBalance()
       setBalance(res.data.data.balance)
-    } catch {
-      // interceptor sudah menangani 401; error lain diabaikan agar UI tetap hidup
+    } catch (error) {
+      // The interceptor already handles 401. Other errors are surfaced so the
+      // user knows the balance failed to load, rather than assuming it's zero.
+      setBalanceError(getErrorMessage(error))
     } finally {
       setBalanceLoading(false)
     }
@@ -66,9 +71,9 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-background">
       <header className="border-b border-line bg-white">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3.5">
-          <span className="text-display tracking-tighter text-primaryDark">Mini<span className='text-textPrimary'>Wallet</span></span>
+          <img src={logoFull} alt="Koku" className="h-7 w-auto" />
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <span className="hidden text-title text-textSecondary sm:inline">
               {user?.username}
             </span>
@@ -76,9 +81,9 @@ export default function DashboardPage() {
               type="button"
               onClick={handleLogout}
               disabled={loggingOut}
-              className="rounded-full border border-line px-3.5 py-1.5 text-title text-textPrimary transition hover:border-primary hover:text-priborder-primary disabled:opacity-50"
+              className="text-title text-textSecondary transition hover:text-textPrimary disabled:opacity-50"
             >
-              {loggingOut ? 'Logging out...' : 'LOG OUT'}
+              {loggingOut ? 'Logging out…' : 'Log out'}
             </button>
           </div>
         </div>
@@ -88,12 +93,13 @@ export default function DashboardPage() {
         <BalanceCard
           balance={balance}
           loading={balanceLoading}
+          error={balanceError}
           onRefresh={loadBalance}
         />
 
         <div className="grid gap-4 sm:grid-cols-2">
           <TopupForm onSuccess={afterTransaction} />
-          <TransferForm onSuccess={afterTransaction} />
+          <TransferForm balance={balance} onSuccess={afterTransaction} />
         </div>
 
         <TransactionList
